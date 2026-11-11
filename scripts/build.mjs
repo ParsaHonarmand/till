@@ -108,7 +108,7 @@ for (const { r, c } of meta) {
     answer: r.answer,
     note: r.note ?? '',
     year: r.year,
-    credit: { artist: c.artist, lic: c.lic, licUrl: c.licUrl, page: c.page },
+    credit: { artist: r.artist ?? c.artist, lic: c.lic, licUrl: c.licUrl, page: c.page }, // r.artist overrides a useless Commons author field ("see image")
   };
   await fs.writeFile(path.join(ROOT, `public/data/puzzles/${r.id}.json`), JSON.stringify(puzzle));
   ids.push(r.id);

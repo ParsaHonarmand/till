@@ -1,6 +1,6 @@
 # Till
 
-A daily geography game: **one real receipt, mostly blacked out. Pin where it was printed.**
+A daily geography game: **three real receipts a day, mostly blacked out. Pin where each one was printed.** Each receipt scores up to 1,000; the day is out of 3,000.
 
 - One line is free. Reveal more lines for clues (prices, tax rates, items, the footer); each costs 6% of your score.
 - Drop up to 3 pins. Score is up to 1,000 for the best pin (~1,000 within a few km, ~500 at 1,000 km).
@@ -32,6 +32,7 @@ swift scripts/sheet.swift out.jpg 9 260 .cache/img/*.jpg   # numbered contact sh
 node scripts/show-rows.mjs <file>   # numbered rows, to write a puzzle entry
 node scripts/geocode.mjs "Lidl Aurich"   # OpenStreetMap lookup for the answer
 npm run build:data             # data/receipts.json -> public/receipts/<id>/*.jpg + public/data/
+                               # schedule: day N plays receipts 3(N-1)..3(N-1)+2 in receipts.json order (No.1 = 1 Nov 2026)
 npm run dev
 ```
 
@@ -47,7 +48,8 @@ npm run dev
   "hidden": [0,1,2,19],     // never revealed in play: name, address, VAT/company IDs
   "private": [36],          // pixelated even at the end: card numbers, names
   "inkTop": true,           // also black out everything above the first text line (logos)
-  "hiddenBoxes": [[x,y,w,h]], // extra boxes in original-image fractions, for logos elsewhere
+  "hiddenBoxes": [[x,y,w,h]], // extra boxes in original-image fractions, for logos or QR codes elsewhere
+  "artist": "…",            // optional: overrides a messy Commons author field in the credit
   "note": "What gave it away…"
 }
 ```
