@@ -18,13 +18,18 @@ export interface Puzzle {
 }
 export interface Index { puzzles: string[] } // ids in schedule order
 
-export const EPOCH = Date.UTC(2026, 10, 9); // No.1 = 9 Nov 2026
+export const EPOCH = Date.UTC(2026, 10, 1); // No.1 = 1 Nov 2026, so launch day (11 Nov) opens with ten days of archive
+export const ROUNDS = 3; // receipts per day
 
 export function todayNumber(now = new Date()): number {
   const local = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
   return Math.floor((local - EPOCH) / 86400000) + 1;
 }
-export const puzzleFor = (n: number, idx: Index) => idx.puzzles[(((n - 1) % idx.puzzles.length) + idx.puzzles.length) % idx.puzzles.length];
+/** The day's receipts: consecutive ids from the schedule (wrapping round when the pool runs out). */
+export function puzzlesFor(n: number, idx: Index): string[] {
+  const len = idx.puzzles.length;
+  return Array.from({ length: ROUNDS }, (_, r) => idx.puzzles[((((n - 1) * ROUNDS + r) % len) + len) % len]);
+}
 
 const cache = new Map<string, Promise<unknown>>();
 export function load<T>(url: string): Promise<T> {
@@ -40,7 +45,7 @@ export interface Pin { lat: number; lon: number; km: number }
 export interface PlayState { revealed: number; pins: Pin[]; done: boolean; score: number }
 export const fresh = (): PlayState => ({ revealed: 1, pins: [], done: false, score: 0 });
 
-const KEY = 'till:v1:';
+const KEY = 'till:v2:'; // v2: three receipts a day
 export function loadPlay(key: string): PlayState | null {
   try { return JSON.parse(localStorage.getItem(KEY + 'play:' + key) || 'null'); } catch { return null; }
 }
@@ -50,8 +55,8 @@ export function savePlay(key: string, s: PlayState) {
 
 export interface Stats { played: number; total: number; best: number; streak: number; maxStreak: number; last: number; dist: number[] }
 const EMPTY: Stats = { played: 0, total: 0, best: 0, streak: 0, maxStreak: 0, last: 0, dist: [0, 0, 0, 0, 0] };
-/** Score buckets for the chart: 0–199, 200–399, 400–599, 600–799, 800–1000. */
-export const bucket = (score: number) => Math.min(4, Math.floor(score / 200));
+/** Day-total buckets for the chart: 0–599, 600–1199, 1200–1799, 1800–2399, 2400–3000. */
+export const bucket = (score: number) => Math.min(4, Math.floor(score / 600));
 export function loadStats(): Stats {
   try {
     const s = { ...EMPTY, ...JSON.parse(localStorage.getItem(KEY + 'stats') || '{}') };

@@ -10,11 +10,18 @@ export function distanceKm(a: [number, number], b: [number, number]): number {
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
-/** Initial compass bearing from a to b, degrees clockwise from north. */
+/**
+ * Direction from a to b as it looks on the map (rhumb line, Mercator), degrees clockwise from north.
+ * Deliberately not the great-circle bearing: from Texas, Hong Kong is "north-west" over the pole,
+ * which is true but looks wrong on a flat map.
+ */
 export function bearing(a: [number, number], b: [number, number]): number {
-  const y = Math.sin(rad(b[1] - a[1])) * Math.cos(rad(b[0]));
-  const x = Math.cos(rad(a[0])) * Math.sin(rad(b[0])) - Math.sin(rad(a[0])) * Math.cos(rad(b[0])) * Math.cos(rad(b[1] - a[1]));
-  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  const p1 = rad(a[0]), p2 = rad(b[0]);
+  let dl = rad(b[1] - a[1]);
+  if (dl > Math.PI) dl -= 2 * Math.PI;
+  if (dl < -Math.PI) dl += 2 * Math.PI;
+  const dpsi = Math.log(Math.tan(Math.PI / 4 + p2 / 2) / Math.tan(Math.PI / 4 + p1 / 2));
+  return ((Math.atan2(dl, dpsi) * 180) / Math.PI + 360) % 360;
 }
 
 export const COMPASS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
@@ -31,7 +38,7 @@ export const BANDS = [
   { max: 500, label: 'WARM', short: 'warm', range: 'within 500 km', heat: 3 },
   { max: 1500, label: 'LUKEWARM', short: 'lukewarm', range: 'within 1,500 km', heat: 2 },
   { max: 4000, label: 'COLD', short: 'cold', range: 'within 4,000 km', heat: 1 },
-  { max: Infinity, label: 'FREEZING', short: 'freezing', range: 'further', heat: 0 },
+  { max: Infinity, label: 'FREEZING', short: 'freezing', range: 'over 4,000 km', heat: 0 },
 ];
 export const band = (km: number) => BANDS.find((b) => km <= b.max)!;
 

@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import PinMap, { type Clue } from './PinMap';
 import {
-  dateOf, flag, fresh, load, loadPlay, loadStats, markHelp, msToMidnight, puzzleFor, recordStats, savePlay, seenHelp, todayNumber,
+  ROUNDS, dateOf, flag, fresh, load, loadPlay, loadStats, markHelp, msToMidnight, puzzlesFor, recordStats, savePlay, seenHelp, todayNumber,
   type Index, type PlayState, type Puzzle, type Stats,
 } from './game';
 import { BANDS, COMPASS, MAX, MIN_MULT, PINS, PIN_COST, REVEAL_COST, band, bearing, distanceKm, fmtKm, multiplier, octant, pinPoints } from './geo';
 
 const HEAT_EMOJI = ['⬛', '🟦', '🟨', '🟧', '🟥', '🎯'];
+const DAY_MAX = MAX * ROUNDS;
 const params = new URLSearchParams(location.search);
 const pct = (x: number) => `${Math.round(x * 100)}%`;
+const num = (x: number) => x.toLocaleString('en-GB');
+type ModalKind = null | 'help' | 'stats' | 'archive';
 
 export default function App() {
   const [idx, setIdx] = useState<Index | null>(null);
@@ -16,14 +19,12 @@ export default function App() {
   useEffect(() => {
     load<Index>('data/index.json').then(setIdx, (e) => setErr(String(e)));
   }, []);
-  if (err) return <div className="boot">COULDN'T LOAD TODAY'S RECEIPT<small>{err}</small></div>;
+  if (err) return <div className="boot">COULDN'T LOAD TODAY'S RECEIPTS<small>{err}</small></div>;
   if (!idx) return <Boot />;
   const today = todayNumber();
-  const forced = params.get('p');
   const asked = params.has('n') ? parseInt(params.get('n')!, 10) : today;
   const n = Math.max(1, Math.min(today, Number.isFinite(asked) ? asked : today)); // no peeking ahead
-  const id = forced && idx.puzzles.includes(forced) ? forced : puzzleFor(n, idx);
-  return <Game key={id + n} id={id} n={forced ? null : n} today={today} idx={idx} />;
+  return <Day key={n} n={n} today={today} idx={idx} />;
 }
 
 const Boot = () => (
@@ -32,30 +33,109 @@ const Boot = () => (
   </div>
 );
 
-function Game({ id, n, today, idx }: { id: string; n: number | null; today: number; idx: Index }) {
-  const [pz, setPz] = useState<Puzzle | null>(null);
-  const key = n != null ? 'day:' + n : 'p:' + id;
-  const [st, setSt] = useState<PlayState>(() => loadPlay(key) ?? fresh());
-  const [draft, setDraft] = useState<[number, number] | null>(null);
-  const [modal, setModal] = useState<null | 'help' | 'stats' | 'archive' | 'zoom'>(() => (seenHelp() ? null : 'help'));
+/** One day: three receipts in a row, scored out of 3,000. */
+function Day({ n, today, idx }: { n: number; today: number; idx: Index }) {
+  const ids = useMemo(() => puzzlesFor(n, idx), [n, idx]);
+  const keyOf = (r: number) => `day:${n}:${r}`;
+  const [plays, setPlays] = useState<(PlayState | null)[]>(() => ids.map((_, r) => loadPlay(keyOf(r))));
+  const open = plays.findIndex((p) => !p?.done);
+  const [round, setRound] = useState(open === -1 ? 0 : open);
+  const [modal, setModal] = useState<ModalKind>(() => (seenHelp() ? null : 'help'));
   const [stats, setStats] = useState<Stats>(loadStats);
+  const allDone = open === -1;
+  useEffect(() => { window.scrollTo({ top: 0 }); }, [round]);
+  const total = plays.reduce((a, p) => a + (p?.done ? p.score : 0), 0);
+
+  const onFinish = useCallback((r: number, s: PlayState) => {
+    setPlays((prev) => {
+      const next = prev.map((p, i) => (i === r ? s : p));
+      if (n === today && next.every((p) => p?.done)) {
+        setStats(recordStats(n, next.reduce((a, p) => a + (p?.score ?? 0), 0))); // archive days don't touch the streak
+      }
+      return next;
+    });
+  }, [n, today]);
+
+  return (
+    <div className="app">
+      <header className="top">
+        <a className="brand" href="./" aria-label="Till home">
+          <span className="logo">TILL</span>
+          <span className="tag">three receipts a day · where were they printed?</span>
+        </a>
+        <div className="meta">
+          <button className="no" onClick={() => setModal('archive')} title="Past days">No.{n}</button>
+          <button className="ghost" onClick={() => setModal('stats')} aria-label="Statistics">▥</button>
+          <button className="ghost" onClick={() => setModal('help')} aria-label="How to play">?</button>
+        </div>
+      </header>
+
+      <nav className="rounds" aria-label="Today's receipts">
+        {ids.map((_, r) => {
+          const p = plays[r];
+          const can = p?.done || r === open;
+          return (
+            <button key={r} className={`rd${r === round ? ' on' : ''}${p?.done ? ' done' : ''}`} disabled={!can} onClick={() => setRound(r)}>
+              <span className="rn">RECEIPT {r + 1}</span>
+              <b>{p?.done ? num(p.score) : r === open ? 'now' : '—'}</b>
+            </button>
+          );
+        })}
+        <div className="rd total">
+          <span className="rn">DAY TOTAL</span>
+          <b>{num(total)}<small> / {num(DAY_MAX)}</small></b>
+        </div>
+      </nav>
+
+      <Game
+        key={ids[round] + round}
+        id={ids[round]}
+        store={keyOf(round)}
+        paused={modal != null}
+        onFinish={(s) => onFinish(round, s)}
+        summary={allDone ? <DaySummary n={n} today={today} plays={plays as PlayState[]} stats={stats} onStats={() => setModal('stats')} /> : null}
+        cta={allDone ? null : (
+          <button className="btn primary wide next-rd" onClick={() => setRound(open)}>
+            Next: receipt {open + 1} of {ROUNDS} →
+          </button>
+        )}
+      />
+
+      {modal === 'help' && <Help onClose={() => { markHelp(); setModal(null); }} />}
+      {modal === 'stats' && <StatsModal stats={stats} onClose={() => setModal(null)} />}
+      {modal === 'archive' && <Archive today={today} current={n} onClose={() => setModal(null)} />}
+    </div>
+  );
+}
+
+function Game({ id, store, paused, onFinish, summary, cta }: {
+  id: string; store: string; paused: boolean; onFinish: (s: PlayState) => void; summary: React.ReactNode; cta: React.ReactNode;
+}) {
+  const [pz, setPz] = useState<Puzzle | null>(null);
+  const [st, setSt] = useState<PlayState>(() => loadPlay(store) ?? fresh());
+  const [draft, setDraft] = useState<[number, number] | null>(null);
+  const [zoom, setZoom] = useState(false);
   const [view, setView] = useState<'receipt' | 'map'>('receipt');
   const [flash, setFlash] = useState<string | null>(null);
 
   useEffect(() => {
     load<Puzzle>(`data/puzzles/${id}.json`).then(setPz);
   }, [id]);
-  useEffect(() => savePlay(key, st), [key, st]);
+  useEffect(() => savePlay(store, st), [store, st]);
 
   const total = pz?.segments.length ?? 0;
   const answer = useMemo<[number, number] | null>(() => (pz ? [pz.answer.lat, pz.answer.lon] : null), [pz]);
 
   const finish = useCallback((s: PlayState): PlayState => {
     const best = Math.min(...s.pins.map((p) => p.km));
-    const score = Math.round(pinPoints(best) * multiplier(s.revealed - 1, s.pins.length));
-    if (n != null && n === today) setStats(recordStats(n, score)); // archive days don't touch the streak
-    return { ...s, done: true, score };
-  }, [n, today]);
+    const done = { ...s, done: true, score: Math.round(pinPoints(best) * multiplier(s.revealed - 1, s.pins.length)) };
+    setTimeout(() => {
+      onFinish(done);
+      // phones: the finished layout puts the map and result first, so start from the top of it
+      if (matchMedia('(max-width: 820px)').matches) document.querySelector('.board')?.scrollIntoView({ behavior: 'smooth' });
+    }, 0);
+    return done;
+  }, [onFinish]);
 
   const reveal = useCallback(() => setSt((s) => (s.done || s.revealed >= total ? s : { ...s, revealed: s.revealed + 1 })), [total]);
   const drop = useCallback(() => {
@@ -81,19 +161,19 @@ function Game({ id, n, today, idx }: { id: string; n: number | null; today: numb
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === 'Escape') setModal(null);
-      if (modal || st.done) return;
+      if (e.key === 'Escape') setZoom(false);
+      if (paused || zoom || st.done) return;
       if (e.key === 'r' || e.key === 'R') reveal();
       if (e.key === 'Enter') drop();
       if ((e.key === 'l' || e.key === 'L') && st.pins.length) lockIn();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [modal, st.done, st.pins.length, reveal, drop, lockIn]);
+  }, [paused, zoom, st.done, st.pins.length, reveal, drop, lockIn]);
 
-  const clues = useMemo<Clue[]>(() => (answer ? st.pins.map((p) => {
-    return { o: octant(bearing([p.lat, p.lon], answer)), heat: band(p.km).heat, hit: p.km <= BANDS[0].max };
-  }) : []), [st.pins, answer]);
+  const clues = useMemo<Clue[]>(() => (answer ? st.pins.map((p) => (
+    { o: octant(bearing([p.lat, p.lon], answer)), heat: band(p.km).heat, hit: p.km <= BANDS[0].max }
+  )) : []), [st.pins, answer]);
 
   if (!pz || !answer) return <Boot />;
   const reveals = st.revealed - 1; // the first line is free
@@ -105,21 +185,7 @@ function Game({ id, n, today, idx }: { id: string; n: number | null; today: numb
   const shown = st.done ? total : st.revealed;
 
   return (
-    <div className="app">
-      <header className="top">
-        <a className="brand" href="./" aria-label="Till home">
-          <span className="logo">TILL</span>
-          <span className="tag">one receipt a day · where was it printed?</span>
-        </a>
-        <div className="meta">
-          <button className="no" onClick={() => setModal('archive')} title="Past receipts">
-            {n != null ? `No.${n}` : 'PRACTICE'}
-          </button>
-          <button className="ghost" onClick={() => setModal('stats')} aria-label="Statistics">▥</button>
-          <button className="ghost" onClick={() => setModal('help')} aria-label="How to play">?</button>
-        </div>
-      </header>
-
+    <>
       <nav className="tabs" aria-label="Switch panel">
         <button className={view === 'receipt' ? 'on' : ''} onClick={() => setView('receipt')}>🧾 Receipt <small>{shown}/{total}</small></button>
         <button className={view === 'map' ? 'on' : ''} onClick={() => setView('map')}>📍 Map <small>{st.pins.length}/{PINS}</small></button>
@@ -127,7 +193,7 @@ function Game({ id, n, today, idx }: { id: string; n: number | null; today: numb
 
       <main className={`board show-${view}${st.done ? ' done' : ''}`}>
         <section className="paper-col">
-          <Receipt pz={pz} revealed={shown} full={st.done} onZoom={() => setModal('zoom')} />
+          <Receipt pz={pz} revealed={shown} full={st.done} onZoom={() => setZoom(true)} />
           {!st.done && (
             <div className="dock">
               <Pot worth={worth} lockNow={lockNow} pinsLeft={pinsLeft} />
@@ -152,20 +218,25 @@ function Game({ id, n, today, idx }: { id: string; n: number | null; today: numb
           </div>
           {!st.done ? (
             <div className="guess">
-              <Pot worth={worth} lockNow={lockNow} pinsLeft={pinsLeft} />
-              <div className="actions">
-                <button className="btn primary" disabled={!draft} onClick={drop}>
-                  {draft ? `Drop pin ${st.pins.length + 1} of ${PINS}` : 'Tap the map to place a pin'}
-                </button>
-                {lockNow != null && (
-                  <button className="btn" onClick={lockIn}>Lock in pin {bestNo} · {lockNow} pts</button>
-                )}
+              <div className="guess-dock">
+                <Pot worth={worth} lockNow={lockNow} pinsLeft={pinsLeft} />
+                <div className="actions">
+                  <button className="btn primary" disabled={!draft} onClick={drop}>
+                    {draft ? `Drop pin ${st.pins.length + 1} of ${PINS}` : 'Tap the map to place a pin'}
+                  </button>
+                  {lockNow != null && (
+                    <button className="btn" onClick={lockIn}>Lock in pin {bestNo} · {lockNow} pts</button>
+                  )}
+                </div>
               </div>
               <p className="rule">{PINS} pins · <b>your closest one counts</b> · each line −{pct(REVEAL_COST)}, each extra pin −{pct(PIN_COST)}</p>
               {st.pins.length > 0 && <PinList st={st} answer={answer} />}
             </div>
           ) : (
-            <Result pz={pz} st={st} best={best!} n={n} today={today} stats={stats} idx={idx} onStats={() => setModal('stats')} />
+            <>
+              {summary}
+              <Result pz={pz} st={st} best={best!} cta={cta} />
+            </>
           )}
         </section>
       </main>
@@ -179,11 +250,8 @@ function Game({ id, n, today, idx }: { id: string; n: number | null; today: numb
         <span>Map: OpenFreeMap · © OpenMapTiles · © OpenStreetMap contributors.</span>
       </footer>
 
-      {modal === 'help' && <Help onClose={() => { markHelp(); setModal(null); }} />}
-      {modal === 'stats' && <StatsModal stats={stats} onClose={() => setModal(null)} />}
-      {modal === 'archive' && <Archive today={today} current={n} idx={idx} currentId={id} onClose={() => setModal(null)} />}
-      {modal === 'zoom' && <Zoom pz={pz} revealed={shown} full={st.done} onClose={() => setModal(null)} />}
-    </div>
+      {zoom && <Zoom pz={pz} revealed={shown} full={st.done} onClose={() => setZoom(false)} />}
+    </>
   );
 }
 
@@ -276,44 +344,15 @@ function useCountdown() {
   return [Math.floor(s / 3600), Math.floor((s % 3600) / 60), s % 60].map((x) => String(x).padStart(2, '0')).join(':');
 }
 
-function shareText(n: number | null, st: PlayState, total: number, best: number) {
-  const strip = Array.from({ length: total }, (_, i) => (i < st.revealed ? '🧾' : '⬛')).join('');
-  const pins = st.pins.map((p) => HEAT_EMOJI[band(p.km).heat]).join('');
-  return [
-    `TILL ${n != null ? 'No.' + n : '(practice)'} — ${st.score}/${MAX}`,
-    strip,
-    `📍${pins} best pin ${fmtKm(best)} away`,
-    `${location.origin}${location.pathname}`,
-  ].join('\n');
-}
+const verdictOf = (score: number) => (score >= 900 ? 'LOCAL!' : score >= 700 ? 'WELL TRAVELLED' : score >= 450 ? 'RIGHT AREA' : score >= 200 ? 'TOURIST' : 'LOST');
 
-function Result({ pz, st, best, n, today, stats, idx, onStats }: {
-  pz: Puzzle; st: PlayState; best: number; n: number | null; today: number; stats: Stats; idx: Index; onStats: () => void;
-}) {
-  const [copied, setCopied] = useState(false);
-  const countdown = useCountdown();
-  const text = shareText(n, st, pz.segments.length, best);
-  const practice = useMemo(() => {
-    const others = idx.puzzles.filter((p) => p !== pz.id);
-    return others[(pz.id.length * 7 + st.score) % Math.max(1, others.length)];
-  }, [idx, pz.id, st.score]);
-  const share = async () => {
-    try {
-      if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ text });
-      else {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-      }
-    } catch { /* cancelled */ }
-  };
-  const verdict = st.score >= 900 ? 'LOCAL!' : st.score >= 700 ? 'WELL TRAVELLED' : st.score >= 450 ? 'RIGHT AREA' : st.score >= 200 ? 'TOURIST' : 'LOST';
+function Result({ pz, st, best, cta }: { pz: Puzzle; st: PlayState; best: number; cta: React.ReactNode }) {
   const bestPin = st.pins.reduce((a, p) => (p.km < a.km ? p : a));
   return (
     <div className="result">
       <div className="stamp-row">
         <div className="stamp">
-          <span className="verdict">{verdict}</span>
+          <span className="verdict">{verdictOf(st.score)}</span>
           <span className="pts">{st.score}</span>
           <span className="of">/ {MAX}</span>
         </div>
@@ -325,19 +364,57 @@ function Result({ pz, st, best, n, today, stats, idx, onStats }: {
           </div>
         </div>
       </div>
+      {cta && <div className="result-cta">{cta}</div>}
       <Tally st={st} best={best} bestNo={st.pins.indexOf(bestPin) + 1} />
       {pz.note && <p className="note"><b>The giveaways:</b> {pz.note}</p>}
+    </div>
+  );
+}
+
+function shareText(n: number, plays: PlayState[]) {
+  const total = plays.reduce((a, p) => a + p.score, 0);
+  return [
+    `TILL No.${n} — ${num(total)}/${num(DAY_MAX)}`,
+    ...plays.map((p, i) => `🧾${i + 1} ${p.pins.map((x) => HEAT_EMOJI[band(x.km).heat]).join('')}${'⬜'.repeat(PINS - p.pins.length)} ${p.score}`),
+    `${location.origin}${location.pathname}`,
+  ].join('\n');
+}
+
+function DaySummary({ n, today, plays, stats, onStats }: { n: number; today: number; plays: PlayState[]; stats: Stats; onStats: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const countdown = useCountdown();
+  const total = plays.reduce((a, p) => a + p.score, 0);
+  const text = shareText(n, plays);
+  const share = async () => {
+    try {
+      if (navigator.share && matchMedia('(pointer: coarse)').matches) await navigator.share({ text });
+      else {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1800);
+      }
+    } catch { /* cancelled */ }
+  };
+  return (
+    <div className="day-sum">
+      <div className="ds-head">
+        <span className="ds-lbl">No.{n} · DAY TOTAL</span>
+        <span className="ds-pts">{num(total)}</span>
+        <span className="ds-of">/ {num(DAY_MAX)}</span>
+      </div>
       <div className="actions">
         <button className="btn primary" onClick={share}>{copied ? 'Copied to clipboard ✓' : 'Share result'}</button>
-        {n === today && <button className="btn" onClick={onStats}>Stats</button>}
-        {practice && <a className="btn" href={`?p=${practice}`}>Practice receipt</a>}
+        <button className="btn" onClick={onStats}>Stats</button>
+        {n !== today && <a className="btn" href="./">Today's receipts</a>}
       </div>
       <pre className="share-preview">{text}</pre>
-      {n === today && (
+      {n === today ? (
         <div className="next">
-          next receipt in <b>{countdown}</b>
+          next receipts in <b>{countdown}</b>
           {stats.streak > 1 && <span> · 🔥 {stats.streak} day streak</span>}
         </div>
+      ) : (
+        <div className="next">archive day · doesn't count towards your streak</div>
       )}
     </div>
   );
@@ -360,6 +437,11 @@ function Tally({ st, best, bestNo }: { st: PlayState; best: number; bestNo: numb
 }
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal" role="dialog" aria-label={title} onClick={(e) => e.stopPropagation()}>
@@ -374,10 +456,10 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 function Help({ onClose }: { onClose: () => void }) {
   return (
     <Modal title="HOW TO PLAY" onClose={onClose}>
-      <p className="lede">One real receipt a day, photographed somewhere in the world. The shop's name and address are blacked out. <b>Pin where it was printed.</b></p>
+      <p className="lede"><b>Three real receipts a day</b>, photographed around the world. The shops' names and addresses are blacked out. <b>Pin where each one was printed.</b> Each receipt is worth up to {num(MAX)}; your day is out of {num(DAY_MAX)}.</p>
       <ol className="steps">
-        <li><span>🧾</span><div><b>Read the clues.</b> One line is free. Reveal more — prices, tax, items, the footer — for {pct(REVEAL_COST)} of your score each.</div></li>
-        <li><span>📍</span><div><b>Drop a pin.</b> Up to {MAX} points, depending on how close you are to the shop. Within 25 km ends the round.</div></li>
+        <li><span>🧾</span><div><b>Read the clues.</b> One line is free. Reveal more — prices, tax, items, the footer — for {pct(REVEAL_COST)} of that receipt's score each.</div></li>
+        <li><span>📍</span><div><b>Drop a pin.</b> The closer to the shop, the more points. Within 25 km ends the round.</div></li>
         <li><span>🧭</span><div><b>Missed?</b> You'll get an arrow pointing towards the shop and how hot you are — and whether you're warmer or colder than your last pin. You get {PINS} pins, each extra one costs {pct(PIN_COST)}.</div></li>
         <li><span>🏁</span><div><b>Your closest pin counts.</b> Lock it in whenever you like. The score panel always shows what you'd bank right now.</div></li>
       </ol>
@@ -392,17 +474,17 @@ function Help({ onClose }: { onClose: () => void }) {
 
 function StatsModal({ stats, onClose }: { stats: Stats; onClose: () => void }) {
   const max = Math.max(1, ...stats.dist);
-  const labels = ['0–199', '200–399', '400–599', '600–799', '800+'];
+  const labels = ['0–599', '600–1,199', '1,200–1,799', '1,800–2,399', '2,400+'];
   return (
     <Modal title="STATISTICS" onClose={onClose}>
       <div className="stats">
-        <div><b>{stats.played}</b>played</div>
-        <div><b>{stats.played ? Math.round(stats.total / stats.played) : 0}</b>average</div>
-        <div><b>{stats.best}</b>best</div>
+        <div><b>{stats.played}</b>days played</div>
+        <div><b>{num(stats.played ? Math.round(stats.total / stats.played) : 0)}</b>average</div>
+        <div><b>{num(stats.best)}</b>best day</div>
         <div><b>{stats.streak}</b>streak</div>
         <div><b>{stats.maxStreak}</b>max streak</div>
       </div>
-      <h3>SCORE DISTRIBUTION</h3>
+      <h3>DAY TOTALS (OUT OF {num(DAY_MAX)})</h3>
       <div className="dist">
         {stats.dist.map((v, i) => (
           <div key={i} className="drow">
@@ -415,46 +497,29 @@ function StatsModal({ stats, onClose }: { stats: Stats; onClose: () => void }) {
   );
 }
 
-function Archive({ today, current, idx, currentId, onClose }: { today: number; current: number | null; idx: Index; currentId: string; onClose: () => void }) {
+function Archive({ today, current, onClose }: { today: number; current: number; onClose: () => void }) {
   const days = Array.from({ length: today }, (_, i) => today - i);
-  const dailyIds = new Set(days.map((d) => puzzleFor(d, idx)));
-  const practice = idx.puzzles.filter((p) => !dailyIds.has(p));
   return (
-    <Modal title="PAST RECEIPTS" onClose={onClose}>
+    <Modal title="PAST DAYS" onClose={onClose}>
       <ul className="archive">
         {days.map((d) => {
-          const p = loadPlay('day:' + d);
+          const ps = Array.from({ length: ROUNDS }, (_, r) => loadPlay(`day:${d}:${r}`));
+          const done = ps.filter((p) => p?.done);
+          const started = ps.some((p) => p && (p.done || p.pins.length || p.revealed > 1));
+          const status = done.length === ROUNDS
+            ? `${num(done.reduce((a, p) => a + p!.score, 0))} pts`
+            : started ? `${done.length}/${ROUNDS} played` : d === today ? 'today' : 'play →';
           return (
             <li key={d} className={d === current ? 'cur' : ''}>
               <a href={d === today ? './' : `?n=${d}`}>
                 <span className="an">No.{d}</span>
                 <span className="ad">{dateOf(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })}</span>
-                <span className="as">{p?.done ? `${p.score} pts` : p?.pins.length || (p && p.revealed > 1) ? 'in progress' : d === today ? 'today' : 'play →'}</span>
+                <span className="as">{status}</span>
               </a>
             </li>
           );
         })}
       </ul>
-      {practice.length > 0 && (
-        <>
-          <h3>PRACTICE RECEIPTS</h3>
-          <p className="small">Future daily receipts, open for practice. Doesn't affect your streak.</p>
-          <ul className="archive">
-            {practice.map((p, i) => {
-              const s = loadPlay('p:' + p);
-              return (
-                <li key={p} className={p === currentId && current == null ? 'cur' : ''}>
-                  <a href={`?p=${p}`}>
-                    <span className="an">#{i + 1}</span>
-                    <span className="ad">practice</span>
-                    <span className="as">{s?.done ? `${s.score} pts` : 'play →'}</span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      )}
     </Modal>
   );
 }

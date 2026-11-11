@@ -68,6 +68,8 @@ export default function PinMap({ pins, clues, draft, onDraft, answer, locked }: 
       }
       m.addSource('lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
       m.addLayer({ id: 'lines', type: 'line', source: 'lines', paint: { 'line-color': '#e0342b', 'line-width': 2.5, 'line-dasharray': [2, 2] } });
+      // start with the credits folded into the ⓘ button; they cover the map on phones otherwise
+      el.current?.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show');
       setReady(true);
     });
     m.on('click', (e: MapMouseEvent) => {
@@ -84,6 +86,14 @@ export default function PinMap({ pins, clues, draft, onDraft, answer, locked }: 
       map.current = null;
     };
   }, []);
+
+  // once the round is over the map is just for looking: let the mouse wheel scroll the page again
+  useEffect(() => {
+    const m = map.current;
+    if (!m) return;
+    if (locked) m.scrollZoom.disable();
+    else m.scrollZoom.enable();
+  }, [locked]);
 
   useEffect(() => {
     const m = map.current;
