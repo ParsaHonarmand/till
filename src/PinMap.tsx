@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { LngLatBounds, Map as MLMap, Marker, NavigationControl, type ExpressionSpecification, type GeoJSONSource, type MapMouseEvent } from 'maplibre-gl';
+import { LngLatBounds, Map as MLMap, Marker, NavigationControl, type ExpressionSpecification, type GeoJSONSource, type MapMouseEvent, setWorkerUrl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+// MapLibre finds its worker next to its own module, which breaks once bundled; hand it a bundled copy
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import type { Pin } from './game';
+
+setWorkerUrl(workerUrl);
 
 /** What a wrong pin told you: roughly which way (compass octant) and how hot. */
 export interface Clue { o: number; heat: number; hit: boolean }
