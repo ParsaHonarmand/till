@@ -1,0 +1,939 @@
+[
+  {
+    "id": "grosse-scheidegg",
+    "title": "File:ReceiptSwiss.jpg",
+    "answer": {
+      "lat": 46.65588,
+      "lon": 8.10187,
+      "place": "Berghotel Grosse Scheidegg, above Grindelwald",
+      "country": "Switzerland",
+      "cc": "CH",
+      "precision": "shop"
+    },
+    "year": "2007",
+    "segments": [
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      14,
+      15,
+      16,
+      17
+    ],
+    "note": "German, but \"Chässpätzli\" is Swiss German for cheese spätzle. Prices in CHF, VAT at 7.6% (Switzerland's rate in 2007) and a euro conversion for tourists. The hotel sits on a mountain pass under the Wetterhorn, two hours' walk above Grindelwald."
+  },
+  {
+    "id": "dionysos-rhodes",
+    "title": "File:GRC — Region Südliche Ägäis — Regionalbezirk Rhodos — Gemeinde Rhodos — Ialyssos-Ixia — 1 Iliadon Str. (Dionysos Hotel · Quittung für die Zahlung der Übernachtungstaxe) Mattes 2022-10-05.jpg",
+    "answer": {
+      "lat": 36.42337,
+      "lon": 28.19843,
+      "place": "Dionysos Hotel, Iliadon St, Ixia, Rhodes",
+      "country": "Greece",
+      "cc": "GR",
+      "precision": "shop"
+    },
+    "year": "2022",
+    "segments": [
+      [
+        7
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        14,
+        15
+      ],
+      [
+        18,
+        19,
+        20
+      ],
+      [
+        8,
+        9,
+        11
+      ],
+      [
+        16,
+        17
+      ],
+      [
+        21
+      ],
+      [
+        6
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "private": [
+      10
+    ],
+    "note": "Greek letters with English underneath: a receipt for the per-night accommodation tax Greek hotels charge. Ixia is the hotel strip on the west coast of Rhodes, the island closest to Turkey in the Dodecanese."
+  },
+  {
+    "id": "kfc-taichung",
+    "title": "File:KFC Xitun Carrefour Restaurant e-invoice ED64052745.jpg",
+    "answer": {
+      "lat": 24.18417,
+      "lon": 120.61493,
+      "place": "KFC, Carrefour Xitun, Taiwan Boulevard, Taichung",
+      "country": "Taiwan",
+      "cc": "TW",
+      "precision": "shop"
+    },
+    "year": "2020",
+    "segments": [
+      [
+        0
+      ],
+      [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      [
+        9,
+        16,
+        17,
+        18
+      ],
+      [
+        4,
+        5,
+        6
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        1,
+        2,
+        3,
+        30,
+        31
+      ]
+    ],
+    "hidden": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "note": "Traditional Chinese characters (not the simplified ones used in mainland China) and the date \"109年\": year 109 of the Republic of China calendar, used only in Taiwan (it's 2020). The \"電子發票\" e-invoice with a lottery number is a Taiwanese institution, and the store code starts TWI."
+  },
+  {
+    "id": "silpo-chernihiv",
+    "title": "File:Чек Сільпо Чернігів 20211217.jpg",
+    "answer": {
+      "lat": 51.515778,
+      "lon": 31.305534,
+      "place": "Silpo, Levka Lukianenka Ave, Chernihiv",
+      "country": "Ukraine",
+      "cc": "UA",
+      "precision": "shop"
+    },
+    "year": "2021",
+    "segments": [
+      [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      [
+        20,
+        21
+      ],
+      [
+        16,
+        17,
+        18,
+        19
+      ],
+      [
+        22,
+        23,
+        24,
+        25,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      [
+        34,
+        35,
+        36,
+        38
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      37
+    ],
+    "private": [
+      2,
+      26
+    ],
+    "note": "Ukrainian, not Russian: the letters і and ї, \"ГРН\" (hryvnia), 20% ПДВ and PrivatBank. Silpo prints a horoscope-style \"prediction\" on every receipt; this one says guests may drop by in the evening. Chernihiv is north of Kyiv, near the Belarus border."
+  },
+  {
+    "id": "alves-curacao",
+    "title": "File:Alves receipt (2019) 01.jpg",
+    "answer": {
+      "lat": 12.14336,
+      "lon": -68.95066,
+      "place": "Alves Supermarket, F.D. Rooseveltweg, Willemstad",
+      "country": "Curaçao",
+      "cc": "CW",
+      "precision": "shop"
+    },
+    "year": "2019",
+    "segments": [
+      [
+        11,
+        12,
+        13,
+        14
+      ],
+      [
+        7,
+        8,
+        9,
+        10,
+        15,
+        16,
+        17,
+        18
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        19,
+        20,
+        21,
+        22
+      ],
+      [
+        23,
+        24,
+        25,
+        26
+      ],
+      [
+        27
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "note": "Prices in FL, the Netherlands Antillean guilder, which only Curaçao and Sint Maarten still use. English item names, a US-style date, 6% sales tax, and the sign-off \"Masha danki pa bo kompra!\": Papiamentu for \"thank you for your purchase\".",
+    "inkTop": true
+  },
+  {
+    "id": "daiso-wonju",
+    "title": "File:네이버 MY플레이스 영수증 인증 화면.png",
+    "answer": {
+      "lat": 37.33037,
+      "lon": 127.9489,
+      "place": "Daiso, Namwon-ro 534beon-gil 22, Wonju",
+      "country": "South Korea",
+      "cc": "KR",
+      "precision": "shop"
+    },
+    "year": "2020",
+    "segments": [
+      [
+        5,
+        6,
+        7
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        10,
+        11,
+        12
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2
+    ],
+    "note": "Hangul and prices in 원 (won). It's a screenshot from Naver's receipt-check app, showing a Daiso haul of Disney keyrings and postcards. Wonju is in Gangwon Province, about 90 minutes east of Seoul."
+  },
+  {
+    "id": "biedronka-kamienna-gora",
+    "title": "File:Paragon fiskalny - 2024.08.02.jpg",
+    "answer": {
+      "lat": 50.77998,
+      "lon": 16.01831,
+      "place": "Biedronka, ul. Nadrzeczna 1B, Kamienna Góra",
+      "country": "Poland",
+      "cc": "PL",
+      "precision": "shop"
+    },
+    "year": "2024",
+    "segments": [
+      [
+        8,
+        9,
+        10,
+        11
+      ],
+      [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      [
+        7
+      ],
+      [
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        37,
+        38,
+        40,
+        41
+      ],
+      [
+        27,
+        28,
+        29
+      ],
+      [
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      39
+    ],
+    "private": [
+      36,
+      42
+    ],
+    "note": "\"Paragon fiskalny\", \"SUMA PLN\" and VAT (PTU) at 23% and 5% are all Polish. Biedronka (\"ladybird\") is Poland's biggest supermarket chain. Kamienna Góra is in Lower Silesia, a few kilometres from the Czech border.",
+    "inkTop": true
+  },
+  {
+    "id": "mcdonalds-dongguan",
+    "title": "File:麦当劳小票订单号39581 (202411141911).jpg",
+    "answer": {
+      "lat": 23.047439,
+      "lon": 113.77295,
+      "place": "McDonald's, Tianbao metro station, Dongguan",
+      "country": "China",
+      "cc": "CN",
+      "precision": "shop"
+    },
+    "year": "2024",
+    "segments": [
+      [
+        3,
+        4,
+        5
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        8,
+        9,
+        10
+      ]
+    ],
+    "hidden": [
+      2
+    ],
+    "note": "Simplified Chinese, so mainland China rather than Taiwan or Hong Kong, and a ¥9.90 mint-chocolate drink ordered through the McDonald's app. The restaurant is at Tianbao metro station in Dongguan, the factory city between Guangzhou and Shenzhen."
+  },
+  {
+    "id": "hofer-wien",
+    "title": "File:Grocery Store Receipt in Vienna.jpg",
+    "answer": {
+      "lat": 48.18686,
+      "lon": 16.37899,
+      "place": "Hofer, Karl-Popper-Straße 2, Vienna (Favoriten)",
+      "country": "Austria",
+      "cc": "AT",
+      "precision": "shop"
+    },
+    "year": "2024",
+    "segments": [
+      [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      [
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      [
+        24,
+        26
+      ],
+      [
+        19,
+        20,
+        21,
+        22,
+        25
+      ],
+      [
+        27,
+        28
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      23,
+      29,
+      30,
+      31
+    ],
+    "note": "German, but the 10% VAT on food is Austrian (Germany's is 7%). The shop's name, blacked out, was Hofer: what Aldi Süd is called in Austria. This one is next to Vienna's main station."
+  },
+  {
+    "id": "pink-peacock-glasgow",
+    "title": "File:Pink Peacock receipt.jpg",
+    "answer": {
+      "lat": 55.8357,
+      "lon": -4.26492,
+      "place": "Pink Peacock café, 451 Victoria Road, Govanhill, Glasgow",
+      "country": "United Kingdom (Scotland)",
+      "cc": "GB",
+      "precision": "shop"
+    },
+    "segments": [
+      [
+        7
+      ],
+      [
+        8,
+        9,
+        10
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      13,
+      14,
+      15
+    ],
+    "note": "Handwritten prices in pounds, a bagel-and-cream-cheese order, and Yiddish in Hebrew letters next to English. Pink Peacock was a queer, Yiddish, pay-what-you-can café in Govanhill, Glasgow's most diverse neighbourhood."
+  },
+  {
+    "id": "bca-bintaro",
+    "title": "File:Receipt from BCA payment terminal in South Tangerang, Indonesia (2025-08-28).jpg",
+    "answer": {
+      "lat": -6.29599,
+      "lon": 106.70899,
+      "place": "Jl. Sumatera, Villa Bintaro Indah, South Tangerang",
+      "country": "Indonesia",
+      "cc": "ID",
+      "precision": "street"
+    },
+    "year": "2025",
+    "segments": [
+      [
+        8,
+        9,
+        10
+      ],
+      [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        11,
+        12,
+        13,
+        14
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "private": [
+      7
+    ],
+    "note": "\"Rp.\" is the Indonesian rupiah, BCA is Bank Central Asia (Indonesia's biggest private bank) and \"TUNAI\" is Indonesian for cash. Bintaro is a suburb on the south-west edge of Jakarta.",
+    "inkTop": true
+  },
+  {
+    "id": "dns-rostov",
+    "title": "File:Кассовый чек выданный при покупке в магазине DNS в России.jpg",
+    "answer": {
+      "lat": 47.28125,
+      "lon": 39.71787,
+      "place": "DNS, Vavilon mall, Kosmonavtov Ave, Rostov-on-Don",
+      "country": "Russia",
+      "cc": "RU",
+      "precision": "shop"
+    },
+    "year": "2023",
+    "segments": [
+      [
+        21,
+        22,
+        24,
+        25,
+        26
+      ],
+      [
+        4,
+        5,
+        6,
+        7
+      ],
+      [
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      [
+        27,
+        32,
+        33,
+        34,
+        35
+      ],
+      [
+        40,
+        47,
+        48
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      18,
+      19,
+      20,
+      29,
+      30,
+      31,
+      36,
+      37,
+      38,
+      39,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "private": [
+      8
+    ],
+    "note": "Cyrillic, prices in roubles (Руб) and 20% НДС (VAT), plus the paperwork of Russia's online-till law (ОФД, ФН, ИНН). DNS is a Russian electronics chain; this branch is in the Vavilon mall in Rostov-on-Don, near the Sea of Azov."
+  },
+  {
+    "id": "u-certa-ctyrkoly",
+    "title": "File:Účtenka Čtyřkoly.jpg",
+    "answer": {
+      "lat": 49.86851,
+      "lon": 14.71964,
+      "place": "Penzion a restaurace U Čerta, Čtyřkoly",
+      "country": "Czechia",
+      "cc": "CZ",
+      "precision": "city"
+    },
+    "year": "2013",
+    "segments": [
+      [
+        7,
+        8,
+        9
+      ],
+      [
+        10,
+        11,
+        12,
+        13
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        16,
+        17
+      ],
+      [
+        14,
+        15
+      ],
+      [
+        20
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      18,
+      19
+    ],
+    "note": "Czech: \"nakládaný hermelín\" is pickled Czech camembert, a classic pub snack. Prices in Kč with a euro conversion, and 21% DPH (VAT). Čtyřkoly is a village on the Sázava river, south-east of Prague."
+  },
+  {
+    "id": "lidl-aurich",
+    "title": "File:Lidl Emsstraße receipt, Aurich (2019) 01.jpg",
+    "answer": {
+      "lat": 53.4602,
+      "lon": 7.4966,
+      "place": "Lidl, Emsstraße 7, Aurich (East Frisia)",
+      "country": "Germany",
+      "cc": "DE",
+      "precision": "street"
+    },
+    "year": "2019",
+    "segments": [
+      [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        18,
+        20,
+        21,
+        22
+      ],
+      [
+        23,
+        24,
+        25
+      ],
+      [
+        14,
+        15,
+        16,
+        17
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      19
+    ],
+    "note": "German item names, \"zu zahlen\" and a Maestro card payment, then the clincher: VAT at 7% and 19%, Germany's two rates. Aurich is in East Frisia, near the North Sea and the Dutch border."
+  },
+  {
+    "id": "hei-yuet-hong-kong",
+    "title": "File:HK Sheung Wan 喜悅海鮮酒家 Hei Yuet Seafood Restaurant Official Receipt in pink Paid chop print May-2010.jpg",
+    "answer": {
+      "lat": 22.28675,
+      "lon": 114.15169,
+      "place": "Hei Yuet Palace Restaurant, 267–275 Des Voeux Road Central, Sheung Wan",
+      "country": "Hong Kong",
+      "cc": "HK",
+      "precision": "shop"
+    },
+    "year": "2010",
+    "segments": [
+      [
+        7,
+        8,
+        9
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        14,
+        15
+      ],
+      [
+        12,
+        13
+      ],
+      [
+        10,
+        11
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      3,
+      4,
+      5
+    ],
+    "note": "Traditional Chinese with English alongside (a colonial-era habit), \"港幣\" and \"H.K. Dollars\". The restaurant was in Sheung Wan, on Hong Kong Island's tram line."
+  },
+  {
+    "id": "munt-la-schera",
+    "title": "File:CHE — GR — Region Engiadina Bassa Val Müstair — Gde. Zernez — Punt la Drossa (Munt la Schera-Tunnel · Quittung) 2024-07-18 Mattes.jpg",
+    "answer": {
+      "lat": 46.65391,
+      "lon": 10.18953,
+      "place": "Munt la Schera tunnel toll, Punt la Drossa, Zernez",
+      "country": "Switzerland",
+      "cc": "CH",
+      "precision": "shop"
+    },
+    "year": "2024",
+    "segments": [
+      [
+        4,
+        5,
+        6
+      ],
+      [
+        12,
+        13,
+        14
+      ],
+      [
+        9,
+        10,
+        11
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        16
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      15,
+      17
+    ],
+    "note": "German with an Italian line (\"Termini di utilizzo\"), CHF and 8.1% VAT, Switzerland's rate since 2024. It's the motorbike toll for the single-lane Munt la Schera tunnel, which leads from the Engadine into duty-free Livigno, Italy."
+  },
+  {
+    "id": "hinterriss-eng",
+    "title": "File:Mautstrasse Hinterriss ↔ Eng (Quittung 2020).jpeg",
+    "answer": {
+      "lat": 47.47305,
+      "lon": 11.46646,
+      "place": "Toll road Hinterriß ↔ Eng, Karwendel",
+      "country": "Austria",
+      "cc": "AT",
+      "precision": "shop"
+    },
+    "year": "2020",
+    "segments": [
+      [
+        7,
+        8
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        9
+      ],
+      [
+        16,
+        17,
+        18
+      ],
+      [
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    ],
+    "hidden": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      15
+    ],
+    "inkTop": true,
+    "note": "German, €3.50 and a legal citation to the \"LGBl.\", the state law gazette Austria uses. It's a motorbike toll for the private road from Hinterriß to the Eng, an alpine meadow in the Karwendel mountains of Tyrol that you can only reach from Germany."
+  }
+]
